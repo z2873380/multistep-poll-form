@@ -1,4 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Button, Typography, IconButton } from '@mui/material';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
+import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
 import './Poll.css';
 
 function Poll() {
@@ -7,35 +13,25 @@ function Poll() {
   const [responses, setResponses] = useState({});
   const [showSummary, setShowSummary] = useState(false);
 
-
-
   const questions = [
     {
       title: "How was your week overall?",
       options: [
-        { label: "Good", icon: "👍", hoverText: "Good Week" },
-        { label: "Neutral", icon: "😐", hoverText: "Neutral Week" },
-        { label: "Bad", icon: "👎", hoverText: "Bad Week" }
+        { label: "Good", icon: <ThumbUpIcon />, hoverText: "Good Week" },
+        { label: "Neutral", icon: <SentimentNeutralIcon />, hoverText: "Neutral Week" },
+        { label: "Bad", icon: <ThumbDownIcon />, hoverText: "Bad Week" }
       ]
     },
     {
       title: "How was the workload?",
       options: [
-        { label: "Manageable", icon: "😌", hoverText: "Workload Manageable" },
-        { label: "Heavy", icon: "😖", hoverText: "Workload Heavy" },
-        { label: "Light", icon: "😊", hoverText: "Workload Light" }
+        { label: "Manageable", icon: <SentimentSatisfiedIcon />, hoverText: "Workload Manageable" },
+        { label: "Heavy", icon: <SentimentDissatisfiedIcon />, hoverText: "Workload Heavy" },
+        { label: "Light", icon: <SentimentSatisfiedIcon />, hoverText: "Workload Light" }
       ]
     },
     {
       title: "Was it exaughsting?",
-      options: [
-        { label: "Manageable", icon: "😌", hoverText: "Workload Manageable" },
-        { label: "Heavy", icon: "😖", hoverText: "Workload Heavy" },
-        { label: "Light", icon: "😊", hoverText: "Workload Light" }
-      ]
-    },
-    {
-      title: "Are you tired?",
       options: [
         { label: "Manageable", icon: "😌", hoverText: "Workload Manageable" },
         { label: "Heavy", icon: "😖", hoverText: "Workload Heavy" },
@@ -50,8 +46,8 @@ function Poll() {
         { label: "Light", icon: "😊", hoverText: "Workload Light" }
       ]
     }
-    // Additional questions can be added similarly
   ];
+
   const handleSelect = (option, questionTitle) => {
     setResponses(prev => ({ ...prev, [questionTitle]: option }));
     if (activeStep + 1 < questions.length) {
@@ -111,21 +107,32 @@ function Poll() {
                 key={i}
                 onClick={() => handleSelect(option.label, questions[activeStep].title)} 
                 className="option"
+                onMouseEnter={() => setHoverText(option.hoverText)} 
                 onMouseLeave={() => setHoverText("")} 
               >
-                {option.icon} {option.label}
+                <IconButton>
+                  {option.icon}
+                </IconButton>
+                {option.label}
               </span>
             ))}
+            <Typography variant="subtitle1" style={{ marginTop: '20px' }}>
+              {hoverText}
+            </Typography>
           </div>
         </>) : (
         <div className="summary">
-          <h2>Summary of your responses:</h2>
+          <Typography variant="h4" component="h2" gutterBottom>
+            Summary of your responses:
+          </Typography>
           <ul>
             {Object.entries(responses).map(([question, response], index) => (
               <li key={index}>{question}: {response}</li>
             ))}
           </ul>
-          <button onClick={handleRestart}>Restart</button>
+          <Button variant="contained" color="primary" onClick={handleRestart}>
+            Restart
+          </Button>
         </div>
       )}
     </div>
