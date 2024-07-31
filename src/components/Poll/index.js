@@ -1,17 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, Typography, IconButton } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
 import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
 import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
+import {
+  setActiveStep,
+  setHoverText,
+  setResponses,
+  setShowSummary,
+  resetPoll,
+} from '../../features/poll/pollSlice';
 import './Poll.css';
 
 function Poll() {
-  const [activeStep, setActiveStep] = useState(0);
-  const [hoverText, setHoverText] = useState(""); // State to handle hover text
-  const [responses, setResponses] = useState({});
-  const [showSummary, setShowSummary] = useState(false);
+  const dispatch = useDispatch();
+  const { activeStep, hoverText, responses, showSummary } = useSelector((state) => state.poll);
 
   const questions = [
     {
@@ -19,48 +25,46 @@ function Poll() {
       options: [
         { label: "Good", icon: <ThumbUpIcon />, hoverText: "Good Week" },
         { label: "Neutral", icon: <SentimentNeutralIcon />, hoverText: "Neutral Week" },
-        { label: "Bad", icon: <ThumbDownIcon />, hoverText: "Bad Week" }
-      ]
+        { label: "Bad", icon: <ThumbDownIcon />, hoverText: "Bad Week" },
+      ],
     },
     {
       title: "How was the workload?",
       options: [
-        { label: "Manageable", icon: <SentimentSatisfiedIcon />, hoverText: "Workload Manageable" },
-        { label: "Heavy", icon: <SentimentDissatisfiedIcon />, hoverText: "Workload Heavy" },
-        { label: "Light", icon: <SentimentSatisfiedIcon />, hoverText: "Workload Light" }
-      ]
+        { label: "Good", icon: <SentimentSatisfiedIcon />, hoverText: "Workload Manageable" },
+        { label: "Neutral", icon: <SentimentDissatisfiedIcon />, hoverText: "Workload Heavy" },
+        { label: "Bad", icon: <SentimentSatisfiedIcon />, hoverText: "Workload Light" },
+      ],
     },
     {
-      title: "Was it exaughsting?",
+      title: "Was it exhausting?",
       options: [
-        { label: "Manageable", icon: "😌", hoverText: "Workload Manageable" },
-        { label: "Heavy", icon: "😖", hoverText: "Workload Heavy" },
-        { label: "Light", icon: "😊", hoverText: "Workload Light" }
-      ]
+        { label: "Good", icon: "😌", hoverText: "Workload Manageable" },
+        { label: "Neutral", icon: "😖", hoverText: "Workload Heavy" },
+        { label: "Bad", icon: "😊", hoverText: "Workload Light" },
+      ],
     },
     {
       title: "How are things going on this project?",
       options: [
-        { label: "Manageable", icon: "😌", hoverText: "Workload Manageable" },
-        { label: "Heavy", icon: "😖", hoverText: "Workload Heavy" },
-        { label: "Light", icon: "😊", hoverText: "Workload Light" }
-      ]
-    }
+        { label: "Good", icon: "😌", hoverText: "Workload Manageable" },
+        { label: "Neutral", icon: "😖", hoverText: "Workload Heavy" },
+        { label: "Bad", icon: "😊", hoverText: "Workload Light" },
+      ],
+    },
   ];
 
   const handleSelect = (option, questionTitle) => {
-    setResponses(prev => ({ ...prev, [questionTitle]: option }));
+    dispatch(setResponses({ [questionTitle]: option }));
     if (activeStep + 1 < questions.length) {
-      setActiveStep(activeStep + 1);
+      dispatch(setActiveStep(activeStep + 1));
     } else {
-      setShowSummary(true);
+      dispatch(setShowSummary(true));
     }
   };
 
   const handleRestart = () => {
-    setResponses({});
-    setActiveStep(0);
-    setShowSummary(false);
+    dispatch(resetPoll());
   };
 
   useEffect(() => {
@@ -74,9 +78,9 @@ function Poll() {
       const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(responses)
+        body: JSON.stringify(responses),
       });
       const data = await response.json();
       console.log('Submission successful:', data);
@@ -95,7 +99,7 @@ function Poll() {
                 <div
                   key={index}
                   className={`dot ${index === activeStep ? 'active' : ''}`}
-                  onClick={() => setActiveStep(index)}
+                  onClick={() => dispatch(setActiveStep(index))}
                 ></div>
               ))}
             </div>
@@ -105,14 +109,12 @@ function Poll() {
             {questions[activeStep].options.map((option, i) => (
               <span
                 key={i}
-                onClick={() => handleSelect(option.label, questions[activeStep].title)} 
+                onClick={() => handleSelect(option.label, questions[activeStep].title)}
                 className="option"
-                onMouseEnter={() => setHoverText(option.hoverText)} 
-                onMouseLeave={() => setHoverText("")} 
+                onMouseEnter={() => dispatch(setHoverText(option.hoverText))}
+                onMouseLeave={() => dispatch(setHoverText(''))}
               >
-                <IconButton>
-                  {option.icon}
-                </IconButton>
+                <IconButton>{option.icon}</IconButton>
                 {option.label}
               </span>
             ))}
@@ -120,14 +122,17 @@ function Poll() {
               {hoverText}
             </Typography>
           </div>
-        </>) : (
+        </>
+      ) : (
         <div className="summary">
           <Typography variant="h4" component="h2" gutterBottom>
             Summary of your responses:
           </Typography>
           <ul>
             {Object.entries(responses).map(([question, response], index) => (
-              <li key={index}>{question}: {response}</li>
+              <li key={index}>
+                {question}: {response}
+              </li>
             ))}
           </ul>
           <Button variant="contained" color="primary" onClick={handleRestart}>
