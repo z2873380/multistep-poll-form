@@ -6,6 +6,7 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
 import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
 import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
+import { RootState, AppDispatch } from '../../store';
 import {
   setActiveStep,
   setHoverText,
@@ -15,11 +16,22 @@ import {
 } from '../../features/poll/pollSlice';
 import './Poll.css';
 
-function Poll() {
-  const dispatch = useDispatch();
-  const { activeStep, hoverText, responses, showSummary } = useSelector((state) => state.poll);
+interface Question {
+  title: string;
+  options: {
+    label: string;
+    icon: React.ReactNode;
+    hoverText: string;
+  }[];
+}
 
-  const questions = [
+const Poll: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { activeStep, hoverText, responses, showSummary } = useSelector(
+    (state: RootState) => state.poll
+  );
+
+  const questions: Question[] = [
     {
       title: "How was your week overall?",
       options: [
@@ -31,30 +43,30 @@ function Poll() {
     {
       title: "How was the workload?",
       options: [
-        { label: "Good", icon: <SentimentSatisfiedIcon />, hoverText: "Workload Manageable" },
-        { label: "Neutral", icon: <SentimentDissatisfiedIcon />, hoverText: "Workload Heavy" },
-        { label: "Bad", icon: <SentimentSatisfiedIcon />, hoverText: "Workload Light" },
+        { label: "Good", icon: <ThumbUpIcon />, hoverText: "Good Week" },
+        { label: "Neutral", icon: <SentimentNeutralIcon />, hoverText: "Neutral Week" },
+        { label: "Bad", icon: <ThumbDownIcon />, hoverText: "Bad Week" },
       ],
     },
     {
       title: "Was it exhausting?",
       options: [
-        { label: "Good", icon: "😌", hoverText: "Workload Manageable" },
-        { label: "Neutral", icon: "😖", hoverText: "Workload Heavy" },
-        { label: "Bad", icon: "😊", hoverText: "Workload Light" },
+        { label: "Good", icon: <ThumbUpIcon />, hoverText: "Good Week" },
+        { label: "Neutral", icon: <SentimentNeutralIcon />, hoverText: "Neutral Week" },
+        { label: "Bad", icon: <ThumbDownIcon />, hoverText: "Bad Week" },
       ],
     },
     {
       title: "How are things going on this project?",
       options: [
-        { label: "Good", icon: "😌", hoverText: "Workload Manageable" },
-        { label: "Neutral", icon: "😖", hoverText: "Workload Heavy" },
-        { label: "Bad", icon: "😊", hoverText: "Workload Light" },
+        { label: "Good", icon: <ThumbUpIcon />, hoverText: "Good Week" },
+        { label: "Neutral", icon: <SentimentNeutralIcon />, hoverText: "Neutral Week" },
+        { label: "Bad", icon: <ThumbDownIcon />, hoverText: "Bad Week" },
       ],
     },
   ];
 
-  const handleSelect = (option, questionTitle) => {
+  const handleSelect = (option: string, questionTitle: string) => {
     dispatch(setResponses({ [questionTitle]: option }));
     if (activeStep + 1 < questions.length) {
       dispatch(setActiveStep(activeStep + 1));
@@ -73,7 +85,7 @@ function Poll() {
     }
   }, [showSummary]);
 
-  const submitResponses = async (responses) => {
+  const submitResponses = async (responses: Record<string, string>) => {
     try {
       const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
         method: 'POST',
@@ -142,6 +154,6 @@ function Poll() {
       )}
     </div>
   );
-}
+};
 
 export default Poll;

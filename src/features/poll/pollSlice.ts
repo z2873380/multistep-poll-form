@@ -1,6 +1,13 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-const initialState = {
+interface PollState {
+  activeStep: number;
+  hoverText: string;
+  responses: Record<string, string>;
+  showSummary: boolean;
+}
+
+const initialState: PollState = {
   activeStep: 0,
   hoverText: "",
   responses: {},
@@ -11,16 +18,16 @@ const pollSlice = createSlice({
   name: 'poll',
   initialState,
   reducers: {
-    setActiveStep: (state, action) => {
+    setActiveStep: (state, action: PayloadAction<number>) => {
       state.activeStep = action.payload;
     },
-    setHoverText: (state, action) => {
+    setHoverText: (state, action: PayloadAction<string>) => {
       state.hoverText = action.payload;
     },
-    setResponses: (state, action) => {
+    setResponses: (state, action: PayloadAction<Record<string, string>>) => {
       state.responses = { ...state.responses, ...action.payload };
     },
-    setShowSummary: (state, action) => {
+    setShowSummary: (state, action: PayloadAction<boolean>) => {
       state.showSummary = action.payload;
     },
     resetPoll: (state) => {

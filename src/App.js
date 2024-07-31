@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import Poll from './components/Poll/index.js'; // Correct path to Poll.js
+import Poll from './components/Poll/index.tsx'; // Correct path to Poll.js
 
 function App() {
   return (
