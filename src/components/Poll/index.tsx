@@ -4,8 +4,6 @@ import { Button, Typography, IconButton } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
-import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
-import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
 import { RootState, AppDispatch } from '../../store';
 import {
   setActiveStep,
