@@ -145,3 +145,87 @@
 .summary button:hover {
     background-color: #7D26CD;
 }
+@keyframes revealLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  
+
+
+  
+  
+  .summary {
+    display: flex;
+    animation: revealLeft 0.5s ease-out;
+  }
+  
+  .summary-left {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  .summary-right {
+    flex: 2;
+    padding: 20px;
+  }
+  
+  .summary ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .summary-box {
+    border: 1px solid #6200EE;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .summary-box:hover {
+    background-color: #6200EE;
+  }
+  
+  .summary-box.selected {
+    background-color: #6200EE;
+  }
+  
+  .summary-right .question-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .summary-right .option {
+    display: flex;
+    align-items: center;
+    margin: 10px;
+    cursor: pointer;
+  }
+  
+  .summary-right .option:hover {
+    color: blue;
+  }
+  
+  .selected {
+    background-color: #6200EE;
+  }

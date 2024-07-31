@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Typography, IconButton } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
+import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
 import { RootState, AppDispatch } from '../../store';
 import {
   setActiveStep,
@@ -28,6 +30,8 @@ const Poll: React.FC = () => {
   const { activeStep, hoverText, responses, showSummary } = useSelector(
     (state: RootState) => state.poll
   );
+
+  const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number | null>(null);
 
   const questions: Question[] = [
     {
@@ -75,6 +79,13 @@ const Poll: React.FC = () => {
 
   const handleRestart = () => {
     dispatch(resetPoll());
+    setSelectedQuestionIndex(null);
+  };
+
+  const handleSummaryClick = (index: number) => {
+    setSelectedQuestionIndex(index);
+    dispatch(setActiveStep(index));
+    dispatch(setShowSummary(false));
   };
 
   useEffect(() => {
@@ -120,7 +131,7 @@ const Poll: React.FC = () => {
               <span
                 key={i}
                 onClick={() => handleSelect(option.label, questions[activeStep].title)}
-                className="option"
+                className={`option ${responses[questions[activeStep].title] === option.label ? 'selected' : ''}`}
                 onMouseEnter={() => dispatch(setHoverText(option.hoverText))}
                 onMouseLeave={() => dispatch(setHoverText(''))}
               >
@@ -135,19 +146,27 @@ const Poll: React.FC = () => {
         </>
       ) : (
         <div className="summary">
-          <Typography variant="h4" component="h2" gutterBottom>
-            Summary of your responses:
-          </Typography>
-          <ul>
-            {Object.entries(responses).map(([question, response], index) => (
-              <li key={index}>
-                {question}: {response}
-              </li>
-            ))}
-          </ul>
-          <Button variant="contained" color="primary" onClick={handleRestart}>
-            Restart
-          </Button>
+          <div className="summary-left">
+            <Typography variant="h4" component="h2" gutterBottom>
+              Summary of your responses:
+            </Typography>
+            <ul>
+              {Object.entries(responses).map(([question, response], index) => (
+                <li
+                  key={index}
+                  className="summary-box"
+                  onClick={() => handleSummaryClick(index)}
+                >
+                  {question}: {response}
+                </li>
+              ))}
+            </ul>
+            <Button variant="contained" color="primary" onClick={handleRestart}>
+              Restart
+            </Button>
+          </div>
+     
+       
         </div>
       )}
     </div>
